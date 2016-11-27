@@ -7,6 +7,12 @@ public class State {
 	protected boolean[][] blocks = new boolean[20][10];
 	protected boolean[][] nextBlock = new boolean[4][4];
 	
+	//values to assess utility of state
+	int[] columnHeights = new int[10];	//heighest occupied cell in each column 
+	int maxHeight = 0;	//heighest occupied cell in ANY column 
+	int[] columnHeightDifferences = new int[9];	//differences in height between each adjacant column
+	int numOfHoles = 0;	//number of unoccupied cells below heighest occupied cell in each column, for all columns 
+	
 	public State(boolean[][] newBlocks, boolean[][] newNextBlock){
 		blocks = deepClone(newBlocks);
 		nextBlock = deepClone(newNextBlock);
