@@ -5,6 +5,7 @@ import java.util.Random;
 //Class in which all the data from the game passes
 public class TetrisAI {
 
+	private Robot keyPressAgent;	//robot used for keypress events, allows the AI to play Jetris
 	HashSet stateTable = new HashSet();
 
 	private final double exploration = .1;
@@ -56,15 +57,27 @@ public class TetrisAI {
 		State nextState = null;
 		if(move.equals("Up")){
 			nextState = upMove;
+			//Press the up key to rotate blocks
+			  keyPressAgent.keyPress(KeyEvent.VK_UP);
+			  keyPressAgent.keyRelease(KeyEvent.VK_UP);
 		}
 		else if(move.equals("Down")){
 			nextState = downMove;
+			//Press the down key to drop blocks
+			  keyPressAgent.keyPress(KeyEvent.VK_DOWN);
+			  keyPressAgent.keyRelease(KeyEvent.VK_DOWN);
 		}
 		else if(move.equals("Right")){
 			nextState = rightMove;
+			//Press the right key to move blocks 
+			  keyPressAgent.keyPress(KeyEvent.VK_RIGHT);
+			  keyPressAgent.keyRelease(KeyEvent.VK_RIGHT);
 		}
 		else if(move.equals("Left")){
 			nextState = leftMove;
+			//Press the left key to move blocks 
+			  keyPressAgent.keyPress(KeyEvent.VK_LEFT);
+			  keyPressAgent.keyRelease(KeyEvent.VK_LEFT);
 		}
 		double nextTurnQValue = 0;
 		if(stateTable.contains(nextState)){
