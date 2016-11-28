@@ -112,7 +112,6 @@ public class Tetris extends Applet {
 	// INSTANCE DATA
 	//
 		
-	private int numInstalled = -1;	//initialize to -1 for first piece
 	int[] maxColumnHeights = new int[COLUMNS];	//used to store max heights for each column (state utility)
 	
 	private int grid[][] = new int[ROWS][COLUMNS];	
@@ -499,7 +498,6 @@ public class Tetris extends Applet {
 		cur_piece.setPosition(3, -4); //-4 to start above top of grid
 		
 		if(cur_piece.canPaste()) {
-			numInstalled++;
 			next_piece = randomPiece();
 			next_piece.setPosition(0, 0);
 			next_piece.paste(next_piece_grid);
