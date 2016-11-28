@@ -1,8 +1,8 @@
+
 /*
 Tetris Applet 
 by Melinda Green
 based on Guido Pellegrini's Summer 2000 term project
-
 Use this code for anything you like.
 If you use it in a mission critical application and 
 a bug in this code causes a global nuclear war, I will
@@ -23,8 +23,8 @@ public class Tetris extends Applet {
 	//
 	
 	private final static int INITIAL_DELAY = 1000;
-	private final static byte ROWS = 18;
-	private final static byte COLUMNS = 10;
+	final static byte ROWS = 15;
+	final static byte COLUMNS = 10;
 	private final static int EMPTY = -1;
 	private final static int DELETED_ROWS_PER_LEVEL = 5;
 	private final static Color PIECE_COLORS[] = {
@@ -112,7 +112,10 @@ public class Tetris extends Applet {
 	// INSTANCE DATA
 	//
 		
-	private int grid[][] = new int[ROWS][COLUMNS];
+	private int numInstalled = -1;	//initialize to -1 for first piece
+	int[] maxColumnHeights = new int[COLUMNS];	//used to store max heights for each column (state utility)
+	
+	private int grid[][] = new int[ROWS][COLUMNS];	
 	private int next_piece_grid[][] = new int[4][4];
 	private int num_rows_deleted = 0;
 	private GridCanvas game_grid = new GridCanvas(grid, true);
@@ -430,18 +433,86 @@ public class Tetris extends Applet {
 		return new TetrisPiece(rand % (PIECE_COLORS.length));
 	}
 	
+	
+	//NICOLAS
+	//returns maximum height of any column in current state
+	//this will be used for state representation and utility eval
+	private int maxHeight(){
+		int max = 0;
+		 for(int i = 0; i < COLUMNS; i++){
+			 if(max < maxColumnHeights[i]){
+				 max = maxColumnHeights[i];
+			 }
+		 }
+		return max;
+	}
+	
+	//NICOLAS
+	//returns array with max height values for each column
+	//this will be used for state representation and utility eval
+	private int[] maxColumnHeights(){
+		
+		int max = 0;
+		for(int i = COLUMNS-1; i >= 0; i--){
+			for(int j = ROWS-1; j >= 0; j--){
+				if(grid[j][i] != EMPTY){
+					max = ROWS - j;
+				}
+				maxColumnHeights[i] =  max;				
+			}
+			max = 0;			
+		}		
+		return maxColumnHeights;
+	}
+	
+	//NICOLAS
+	//returns number of unoccupied cells on the board
+	//count underneath every columns max height, do not count empty cells above 
+	private int numOfEmptyCells(){
+		int emptyCells = 0;
+		for(int i = 0; i < COLUMNS; i++){
+			for(int j = ROWS - maxColumnHeights[i]; j < ROWS ; j++){
+				if(grid[j][i] == EMPTY){
+					emptyCells++;
+				}
+			}
+		}
+		//number of unfilled cells underneath max heights. 
+		return emptyCells;	
+	}
+	
+	//NICOLAS
+	//builds state object based on information about tetris game after the installation of new pieces. 
+	private State buildState(){		
+		State currentState = new State(maxColumnHeights(),maxHeight(),numOfEmptyCells());
+		currentState.printState();
+		return currentState;
+		
+	}
+	
 	private void installNewPiece() {
+	
+		
+		
 		next_piece_canvas.clear();
 		cur_piece = next_piece;
 		cur_piece.setPosition(3, -4); //-4 to start above top of grid
+		
 		if(cur_piece.canPaste()) {
+			numInstalled++;
 			next_piece = randomPiece();
 			next_piece.setPosition(0, 0);
 			next_piece.paste(next_piece_grid);
 			next_piece_canvas.repaint();
+			buildState();
+		
+			
+	
 		}
-		else
+		else{
 			gameOver();
+		}
+		
 	}
 	
 	private void gameOver() {
@@ -462,6 +533,8 @@ public class Tetris extends Applet {
 				return false;
 		return true;
 	}
+	
+	
 	
 	private int countFullRows() {
 		int n_full_rows = 0;
@@ -521,7 +594,9 @@ public class Tetris extends Applet {
 						}
 					}
 				}
+				
 				game_grid.repaint();
+				
 			}
 		});
 		timer.start(); // pauses immediately
@@ -731,4 +806,3 @@ class DoubleBufferedCanvas extends Canvas {
 		mSystemGraphics.drawImage(mActiveOffscreenImage, 0, 0, null);
 	}
 }
-
