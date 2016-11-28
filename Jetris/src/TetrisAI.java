@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 
 //Class in which all the data from the game passes
 public class TetrisAI {
