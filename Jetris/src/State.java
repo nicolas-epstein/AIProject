@@ -4,12 +4,25 @@
 //as you wish
 public class State {
 	
-	protected boolean[][] blocks = new boolean[20][10];
+	protected boolean[][] blocks = new boolean[Tetris.ROWS][Tetris.COLUMNS];
 	protected boolean[][] nextBlock = new boolean[4][4];
+	
+	//values to assess reward of state
+	int[] columnHeights = new int[10];	//heighest occupied cell in each column 
+	int maxHeight = 0;	//heighest occupied cell in ANY column 
+	int emptyCells = 0;
 	
 	public State(boolean[][] newBlocks, boolean[][] newNextBlock){
 		blocks = deepClone(newBlocks);
 		nextBlock = deepClone(newNextBlock);
+	}
+	
+	//secondary constructor based on game info
+	public State(int[] columnHeights, int maxHeight, int emptyCells){
+		this.columnHeights = columnHeights;
+		this.maxHeight = maxHeight;
+		this.emptyCells = emptyCells;
+		
 	}
 	
 	private boolean[][] deepClone(boolean[][] doubleArray){
@@ -18,6 +31,13 @@ public class State {
 			newArray[i] = doubleArray[i].clone();
 		}
 		return newArray;
+	}
+	
+	public void printState(){
+		//printing out max height of state before next piece enters game
+		System.out.println("Max Height: " + maxHeight);
+		System.out.println("Column Height Data: " + Arrays.toString(columnHeights));
+		System.out.println("# of Empty Cells: " + emptyCells);
 	}
 	
 	public boolean equals(State otherState){
